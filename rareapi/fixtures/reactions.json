@@ -1,0 +1,26 @@
+[
+    {
+        "model": "rareapi.reaction",
+        "pk": 1,
+        "fields": {
+            "label": "Happy",  
+            "image_url": "https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2015/4/21/1429629869293/d8e257bb-a76d-49e7-989a-39e07196a915-2060x1236.jpeg"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 2,
+        "fields": {
+            "label": "Sad",
+            "image_url": "https://starecat.com/content/wp-content/uploads/sad-crying-dog-tears-reaction-meme.jpg"
+        }
+    },
+    {
+        "model": "rareapi.reaction",
+        "pk": 3,
+        "fields": {
+            "label": "Meh",
+            "image_url": "https://i.gifer.com/5ZM.gif"  
+        }
+    }
+]

@@ -1,0 +1,15 @@
+[
+    {
+        "model": "rareapi.post",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "category": 1,
+            "title": "Look at this Post",
+            "publication_date": "2021-03-24",
+            "image_url": "https://2.bp.blogspot.com/_5SMlnCFhaTA/TG_gQd-zOcI/AAAAAAAAO78/eEPywjpfwm4/s1600/Carrie_02.jpg",
+            "content": "Look at this content",
+            "approved": true
+        }
+    }
+]

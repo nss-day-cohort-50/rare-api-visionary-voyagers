@@ -1,0 +1,13 @@
+[
+    {
+        "model": "rareapi.rareuser",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "bio": "rare user 1 bio",
+            "profile_image_url": "https://media.vanityfair.com/photos/581b3cbc02ce22a66b4c6d91/master/pass/carrie-1976-horror-film.jpg",
+            "created_on": "2021-03-24",
+            "active": true
+        }
+    }
+]
