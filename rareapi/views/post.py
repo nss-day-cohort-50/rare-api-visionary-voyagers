@@ -9,7 +9,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from rareapi.models import Post
+from rareapi.models import Post, Category
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 
@@ -38,7 +38,48 @@ class PostView(ViewSet):
         except Exception as ex:
             return HttpResponseServerError(ex)
 
+    def update(self, request, pk):
+        user = RareUser.objects.get(user=request.auth.user)
 
+        try:
+            post = Post.objects.get(pk=pk)
+            
+            post.category = Category.objects.get(pk=request.data['categoryId'])
+            post.title = request.data['title']
+            post.publication_date = request.data['date']
+            post.image_url = request.data['imageUrl']
+            post.content = request.data['content']
+            post.approved = request.data['approved']
+            post.user = user
+            post.save()
+            return Response({"message": "Updated Post"}, status= status.HTTP_204_NO_CONTENT)
+        except Exception as ex:
+            return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+            post.delete()
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        except Post.DoesNotExist as ex:
+            return Response({"Message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def create(self, request):
+        user = RareUser.objects.get(user=request.auth.user)
+        try:
+            Post.objects.create(
+                user = user,
+                category = Category.objects.get(pk=request.data['categoryId']),
+                title = request.data['title'],
+                publication_date = request.data['date'],
+                image_url = request.data['imageUrl'],
+                content = request.data['content'],
+                approved = request.data['approved']
+            )
+            return Response({"Message": "Post added"}, status=status.HTTP_201_CREATED)
+        except Exception as ex:
+            return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
