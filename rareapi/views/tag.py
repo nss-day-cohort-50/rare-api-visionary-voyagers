@@ -10,7 +10,7 @@ class TagView(ViewSet):
 
     def list(self, request):
         try:
-            tags = Tag.objects.all()
+            tags = Tag.objects.all().order_by('label')
             serializer = TagSerializer(
                 tags, many=True, context={"request": request})
             return Response(serializer.data)
@@ -26,7 +26,7 @@ class TagView(ViewSet):
         except Exception as ex:
             return Response({"message": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    def destroy(self, pk):
+    def destroy(self,request, pk):
         try:
             tag = Tag.objects.get(pk=pk)
             tag.delete()
