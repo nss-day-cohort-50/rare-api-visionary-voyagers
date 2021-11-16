@@ -7,12 +7,14 @@ from rest_framework import status
 from rareapi.models import Comment, RareUser
 from django.contrib.auth.models import User
 from rareapi.models.post import Post
-
+from datetime import datetime
 class CommentView(ViewSet):
 
     def list(self, request):
         try:
-            comments = Comment.objects.all()
+            post_id = self.request.query_params.get('postId', None)
+            post = Post.objects.get(pk=post_id)
+            comments = Comment.objects.all().filter(post=post)
             serializer = CommentSerializer(
                 comments, many=True, context={"request": request})
             return Response(serializer.data)
@@ -22,12 +24,12 @@ class CommentView(ViewSet):
     def create(self, request):
         try:
             post = Post.objects.get(pk=request.data["postId"])
-            author = RareUser.objects.get(pk=request.data["userId"])
+            author = RareUser.objects.get(user=request.auth.user)
             comment = Comment.objects.create(
                 post=post,
                 author=author,
                 content=request.data["content"],
-                created_on=request.data["createdOn"]
+                created_on= datetime.now().strftime ("%Y-%m-%d") 
             )
             serializer = CommentSerializer(
                 comment, many=False, context={"request": request})
