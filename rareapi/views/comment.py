@@ -14,7 +14,7 @@ class CommentView(ViewSet):
         try:
             post_id = self.request.query_params.get('postId', None)
             post = Post.objects.get(pk=post_id)
-            comments = Comment.objects.all().filter(post=post)
+            comments = Comment.objects.all().filter(post=post).order_by('-created_on')
             serializer = CommentSerializer(
                 comments, many=True, context={"request": request})
             return Response(serializer.data)
