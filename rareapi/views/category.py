@@ -14,7 +14,7 @@ from rest_framework.decorators import action
 
 class CategoryView(ViewSet):
     def list(self,request):
-        categories = Category.objects.all()
+        categories = Category.objects.all().order_by('label')
         serializer = CategorySerializer(categories, many=True, context={"request": request})
         return Response(serializer.data)
 
