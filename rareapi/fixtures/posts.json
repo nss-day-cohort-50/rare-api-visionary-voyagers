@@ -11,5 +11,18 @@
             "content": "Look at this content",
             "approved": true
         }
+    },
+    {
+        "model": "rareapi.post",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "category": 1,
+            "title": "I like turtles",
+            "publication_date": "2021-03-24",
+            "image_url": "https://media1.giphy.com/media/UWhe73bSwu8XR6xdem/giphy.gif?cid=ecf05e47m0hkvn3vtwnymq7puistc80admouj9rh64ac3php&rid=giphy.gif&ct=g",
+            "content": "Turtle time",
+            "approved": true
+        }
     }
 ]

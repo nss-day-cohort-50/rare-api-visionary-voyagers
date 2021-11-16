@@ -21,7 +21,7 @@ class PostView(ViewSet):
 
         user_post = self.request.query_params.get('postbyuser', None)
         if user_post is not None:
-            posts = Post.objects.filter(user = user_post)
+            posts = Post.objects.filter(user = user)
 
         for post in posts:
             post.is_author = post.user == user

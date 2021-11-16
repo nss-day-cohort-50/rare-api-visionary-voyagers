@@ -9,5 +9,16 @@
             "created_on": "2021-03-24",
             "active": true
         }
+    },
+    {
+        "model": "rareapi.rareuser",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "bio": "Daddy Shark doo doooo doo doot doo doot.",
+            "profile_image_url": "https://media4.giphy.com/media/PfHrNe1cSKAjC/giphy.gif?cid=ecf05e47p6hb7cssyo04ire808tdv03no81ed9wua3qworyb&rid=giphy.gif&ct=g",
+            "created_on": "2021-03-24",
+            "active": true
+        }
     }
 ]
