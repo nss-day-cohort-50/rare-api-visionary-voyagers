@@ -68,7 +68,7 @@ class PostView(ViewSet):
     def create(self, request):
         user = RareUser.objects.get(user=request.auth.user)
         try:
-            Post.objects.create(
+            post = Post.objects.create(
                 user = user,
                 category = Category.objects.get(pk=request.data['categoryId']),
                 title = request.data['title'],
@@ -77,6 +77,8 @@ class PostView(ViewSet):
                 content = request.data['content'],
                 approved = request.data['approved']
             )
+            post.tags.set(request.data['tags'])
+            
             return Response({"Message": "Post added"}, status=status.HTTP_201_CREATED)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
