@@ -24,10 +24,20 @@ def login_user(request):
     # If authentication was successful, respond with their token
     if authenticated_user is not None:
         token = Token.objects.get(user=authenticated_user)
-        data = {
-            'valid': True,
-            'token': token.key
-        }
+        data = {}
+        if authenticated_user.is_staff:
+            
+            data = {
+                'valid': True,
+                'token': token.key, 
+                'is_admin': True
+            }
+        else:
+            data = {
+                'valid': True,
+                'token': token.key, 
+                'is_admin': False
+            }
         return Response(data)
     else:
         # Bad login details were provided. So we can't log the user in.
@@ -57,7 +67,7 @@ def register_user(request):
     rare_user = RareUser.objects.create(
         bio=request.data['bio'],
         user=new_user,
-        profile_image=request.data['profileImageURL'],
+        profile_image_url=request.data['profileImageURL'],
         created_on=request.data['createdOn'],
         active=request.data['active']
     )
