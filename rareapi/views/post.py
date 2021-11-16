@@ -19,9 +19,9 @@ class PostView(ViewSet):
         posts = Post.objects.all()
         user = RareUser.objects.get(user=request.auth.user)
 
-        user_post = self.request.query_params.get('postbyuser', None)
+        user_post = self.request.query_params.get('postsbyuser', None)
         if user_post is not None:
-            posts = Post.objects.filter(user = user_post)
+            posts = Post.objects.filter(user=user)
 
         for post in posts:
             post.is_author = post.user == user
