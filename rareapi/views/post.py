@@ -9,7 +9,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from rareapi.models import Post, Category
+from rareapi.models import Post, Category, PostTag
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -81,12 +81,18 @@ class PostView(ViewSet):
                 content=request.data['content'],
                 approved=request.data['approved']
             )
+            post.tags.set(request.data['tagIds'])
             serializer = PostSerializer(
                 post, many=False, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class PostTagSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = PostTag
+        fields = ('id', 'post', 'tag')
+        depth = 1
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -109,5 +115,5 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id', 'user', 'category', 'title', 'publication_date',
-                  'image_url', 'content', 'approved', 'is_author')
+                  'image_url', 'content', 'approved', 'is_author', 'tags')
         depth = 1
