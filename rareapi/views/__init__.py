@@ -4,3 +4,4 @@ from .category import CategoryView
 from .tag import TagView
 from .comment import CommentView
 from .reaction import ReactionView
+from .post_tag import PostTagView
