@@ -22,6 +22,7 @@ from rareapi.models import Category, Comment, DemotionQueue, PostReaction, PostT
 from rareapi.views import login_user, register_user, PostView, CategoryView
 from rareapi.views.comment import CommentView
 from rareapi.views.tag import TagView
+from rareapi.views.reaction import ReactionView
 
 
 router=routers.DefaultRouter(trailing_slash=False)
@@ -29,6 +30,7 @@ router.register(r'posts', PostView, 'post')
 router.register(r'categories', CategoryView, 'category' )
 router.register(r'tags', TagView, 'tag' )
 router.register(r'comments', CommentView, 'comment' )
+router.register(r'reactions', ReactionView, 'reaction' )
 
 urlpatterns = [
     path('', include(router.urls)),
