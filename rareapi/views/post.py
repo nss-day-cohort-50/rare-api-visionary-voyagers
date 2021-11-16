@@ -12,6 +12,8 @@ from rest_framework import status
 from rareapi.models import Post, Category
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
+from datetime import datetime
+
 
 class PostView(ViewSet):
     def list(self, request):
@@ -25,7 +27,8 @@ class PostView(ViewSet):
 
         for post in posts:
             post.is_author = post.user == user
-        serializer = PostSerializer(posts, many=True, context = {'request': request})
+        serializer = PostSerializer(
+            posts, many=True, context={'request': request})
         return Response(serializer.data)
 
     def retrieve(self, request, pk):
@@ -43,7 +46,7 @@ class PostView(ViewSet):
 
         try:
             post = Post.objects.get(pk=pk)
-            
+
             post.category = Category.objects.get(pk=request.data['categoryId'])
             post.title = request.data['title']
             post.publication_date = request.data['date']
@@ -52,11 +55,11 @@ class PostView(ViewSet):
             post.approved = request.data['approved']
             post.user = user
             post.save()
-            return Response({"message": "Updated Post"}, status= status.HTTP_204_NO_CONTENT)
+            return Response({"message": "Updated Post"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def destroy(self, request, pk):
+    def destroy(self, request, pk=None):
         try:
             post = Post.objects.get(pk=pk)
             post.delete()
@@ -65,38 +68,46 @@ class PostView(ViewSet):
             return Response({"Message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def create(self, request):
         user = RareUser.objects.get(user=request.auth.user)
         try:
             post = Post.objects.create(
-                user = user,
-                category = Category.objects.get(pk=request.data['categoryId']),
-                title = request.data['title'],
-                publication_date = request.data['date'],
-                image_url = request.data['imageUrl'],
-                content = request.data['content'],
-                approved = request.data['approved']
+                user=user,
+                category=Category.objects.get(pk=request.data['categoryId']),
+                title=request.data['title'],
+                publication_date=datetime.now().strftime("%Y-%m-%d"),
+                image_url=request.data['imageUrl'],
+                content=request.data['content'],
+                approved=request.data['approved']
             )
-            post.tags.set(request.data['tags'])
-            
-            return Response({"Message": "Post added"}, status=status.HTTP_201_CREATED)
+            serializer = PostSerializer(
+                post, many=False, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name',)
 
+
 class PostUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = RareUser
         fields = ('user', 'profile_image_url',)
 
+
 class PostSerializer(serializers.ModelSerializer):
     user = PostUserSerializer()
     is_author = serializers.BooleanField(required=False)
+
     class Meta:
         model = Post
-        fields = ('id', 'user', 'category', 'title', 'publication_date', 'image_url', 'content', 'approved', 'is_author')
+        fields = ('id', 'user', 'category', 'title', 'publication_date',
+                  'image_url', 'content', 'approved', 'is_author')
         depth = 1
