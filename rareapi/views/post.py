@@ -12,6 +12,7 @@ from rest_framework import status
 from rareapi.models import Post, Category
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class PostView(ViewSet):
     def list(self, request):
@@ -56,7 +57,7 @@ class PostView(ViewSet):
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def destroy(self, request, pk):
+    def destroy(self, request, pk=None):
         try:
             post = Post.objects.get(pk=pk)
             post.delete()
@@ -65,6 +66,7 @@ class PostView(ViewSet):
             return Response({"Message": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
     def create(self, request):
         user = RareUser.objects.get(user=request.auth.user)
         try:
@@ -72,7 +74,7 @@ class PostView(ViewSet):
                 user = user,
                 category = Category.objects.get(pk=request.data['categoryId']),
                 title = request.data['title'],
-                publication_date = request.data['date'],
+                publication_date = datetime.now().strftime ("%Y-%m-%d"),
                 image_url = request.data['imageUrl'],
                 content = request.data['content'],
                 approved = request.data['approved']
