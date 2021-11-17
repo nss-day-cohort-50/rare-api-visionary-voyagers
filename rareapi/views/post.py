@@ -18,8 +18,11 @@ from datetime import datetime
 class PostView(ViewSet):
     def list(self, request):
 
-        posts = Post.objects.all()
         user = RareUser.objects.get(user=request.auth.user)
+        if request.auth.user.is_staff:
+            posts = Post.objects.all()
+        else:
+            posts = Post.objects.all().filter(approved=True)
 
         user_post = self.request.query_params.get('postsbyuser', None)
         if user_post is not None:
@@ -27,6 +30,7 @@ class PostView(ViewSet):
 
         for post in posts:
             post.is_author = post.user == user
+            
         serializer = PostSerializer(
             posts, many=True, context={'request': request})
         return Response(serializer.data)
