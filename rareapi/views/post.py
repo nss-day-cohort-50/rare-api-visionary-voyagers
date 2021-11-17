@@ -18,8 +18,11 @@ from datetime import datetime
 class PostView(ViewSet):
     def list(self, request):
 
-        posts = Post.objects.all()
         user = RareUser.objects.get(user=request.auth.user)
+        if request.auth.user.is_staff:
+            posts = Post.objects.all()
+        else:
+            posts = Post.objects.all().filter(approved=True)
 
         user_post = self.request.query_params.get('postsbyuser', None)
         if user_post is not None:
@@ -27,6 +30,7 @@ class PostView(ViewSet):
 
         for post in posts:
             post.is_author = post.user == user
+
         serializer = PostSerializer(
             posts, many=True, context={'request': request})
         return Response(serializer.data)
@@ -47,12 +51,14 @@ class PostView(ViewSet):
         try:
             post = Post.objects.get(pk=pk)
 
-            post.category = Category.objects.get(pk=request.data['categoryId'])
+            post.category = Category.objects.get(
+                pk=request.data['category_id'])
             post.title = request.data['title']
-            post.publication_date = request.data['date']
-            post.image_url = request.data['imageUrl']
+            post.publication_date = post.publication_date
+            post.image_url = request.data['image_url']
             post.content = request.data['content']
             post.approved = request.data['approved']
+            post.tags.set(request.data['tagIds'])
             post.user = user
             post.save()
             return Response({"message": "Updated Post"}, status=status.HTTP_204_NO_CONTENT)
@@ -74,10 +80,10 @@ class PostView(ViewSet):
         try:
             post = Post.objects.create(
                 user=user,
-                category=Category.objects.get(pk=request.data['categoryId']),
+                category=Category.objects.get(pk=request.data['category_id']),
                 title=request.data['title'],
                 publication_date=datetime.now().strftime("%Y-%m-%d"),
-                image_url=request.data['imageUrl'],
+                image_url=request.data['image_url'],
                 content=request.data['content'],
                 approved=request.data['approved']
             )
@@ -88,11 +94,13 @@ class PostView(ViewSet):
         except Exception as ex:
             return Response({"message": ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class PostTagSerializer(serializers.ModelSerializer):
-    class Meta: 
+    class Meta:
         model = PostTag
         fields = ('id', 'post', 'tag')
         depth = 1
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
