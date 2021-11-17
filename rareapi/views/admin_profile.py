@@ -10,10 +10,15 @@ from rareapi.models import RareUser
 
 class AdminView(ViewSet):
     def partial_update(self, request, pk=None):
-        user = User.objects.get(pk=pk)
+        user = RareUser.objects.get(pk=pk)
         if "is_active" in request.data:
-            user.is_active = not user.is_active
-            user.save()
+            if user.active == 1:
+                user.active = 0
+                user.save()
+            else:
+                user.active = 1
+                user.save()
+            
             return Response({"message": "User Active Status Changed"}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['Get'])
