@@ -13,8 +13,11 @@ class CommentView(ViewSet):
     def list(self, request):
         try:
             post_id = self.request.query_params.get('postId', None)
+            author = RareUser.objects.get(user=request.auth.user)
             post = Post.objects.get(pk=post_id)
             comments = Comment.objects.all().filter(post=post).order_by('-created_on')
+            for comment in comments:
+                comment.is_author = comment.author == author
             serializer = CommentSerializer(
                 comments, many=True, context={"request": request})
             return Response(serializer.data)
@@ -40,12 +43,12 @@ class CommentView(ViewSet):
     def update(self, request, pk):
         try:
             post = Post.objects.get(pk=request.data["postId"])
-            author = RareUser.objects.get(pk=request.data["userId"])
+            author = RareUser.objects.get(user=request.auth.user)
             comment = Comment.objects.get(pk=pk)
             comment.post = post
             comment.author = author
             comment.content = request.data["content"]
-            comment.created_on = request.data["createdOn"]
+            comment.created_on = datetime.now().strftime ("%Y-%m-%d") 
             comment.save()
             return Response("Comment updated", status=status.HTTP_204_NO_CONTENT)
         except Comment.DoesNotExist:
@@ -77,7 +80,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = AuthorSerializer()
-
+    is_author = serializers.BooleanField(required=False)
     class Meta:
         model = Comment
-        fields = ('id', 'post', 'author', 'content', 'created_on')
+        fields = ('id', 'post', 'author', 'content', 'created_on','is_author')
