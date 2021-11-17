@@ -14,6 +14,8 @@ from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from datetime import datetime
 
+from rareapi.models.subscription import Subscription
+
 
 class PostView(ViewSet):
     def list(self, request):
@@ -25,8 +27,19 @@ class PostView(ViewSet):
             posts = Post.objects.all().filter(approved=True)
 
         user_post = self.request.query_params.get('postsbyuser', None)
+        subscribed_posts = self.request.query_params.get('subscribed', None)
         if user_post is not None:
             posts = Post.objects.filter(user=user)
+
+        if subscribed_posts is not None:
+            rare_user = RareUser.objects.get(user=request.auth.user)
+            subscriptions = [Subscription.objects.get(follower=rare_user)]
+            authors = []
+            for sub in subscriptions:
+                authors.append(sub.author.id)
+                
+            for author in authors:
+                posts = Post.objects.filter(user_id=author)
 
         for post in posts:
             post.is_author = post.user == user
