@@ -30,7 +30,7 @@ class PostView(ViewSet):
 
         for post in posts:
             post.is_author = post.user == user
-            
+
         serializer = PostSerializer(
             posts, many=True, context={'request': request})
         return Response(serializer.data)
@@ -58,6 +58,7 @@ class PostView(ViewSet):
             post.image_url = request.data['image_url']
             post.content = request.data['content']
             post.approved = request.data['approved']
+            post.tags.set(request.data['tagIds'])
             post.user = user
             post.save()
             return Response({"message": "Updated Post"}, status=status.HTTP_204_NO_CONTENT)
