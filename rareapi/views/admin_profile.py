@@ -20,6 +20,15 @@ class AdminView(ViewSet):
                 user.save()
             
             return Response({"message": "User Active Status Changed"}, status=status.HTTP_204_NO_CONTENT)
+        elif "is_admin" in request.data:
+            admin = User.objects.get(pk=user.user.id)
+            if admin.is_staff == 1:
+                admin.is_staff = 0
+                admin.save()
+            else:
+                admin.is_staff = 1
+                admin.save()
+            return Response({"message": "User Admin Status Changed"}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['Get'])
 def admin_profile(request):
@@ -46,4 +55,4 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RareUser
-        fields = ('user', 'profile_image_url',)
+        fields = ('id','user', 'profile_image_url','active')
