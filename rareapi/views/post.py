@@ -31,6 +31,11 @@ class PostView(ViewSet):
         for post in posts:
             post.is_author = post.user == user
 
+        cat_post = self.request.query_params.get('postsbycategory', None)
+        if cat_post is not None:
+            category = Category.objects.get(pk = cat_post)
+            posts = posts.filter(category=category, approved=True)
+
         serializer = PostSerializer(
             posts, many=True, context={'request': request})
         return Response(serializer.data)
