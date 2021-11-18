@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
 from rareapi.models import Category, Comment, DemotionQueue, PostReaction, PostTag, Post, RareUser, Reaction, Subscription, Tag
-from rareapi.views import login_user, register_user, PostView, CategoryView, PostTagView, admin_profile, AdminView
+from rareapi.views import login_user, register_user, PostView, CategoryView, PostTagView, admin_profile, AdminView, user_profile, users_list
 from rareapi.views.comment import CommentView
 from rareapi.views.subscription import SubscriptionView
 from rareapi.views.tag import TagView
@@ -42,5 +42,7 @@ urlpatterns = [
     path('register', register_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('login', login_user),
-    path('adminprofile', admin_profile)
+    path('adminprofile', admin_profile),
+    path('userprofile', user_profile),
+    path('userslist', users_list)
 ]

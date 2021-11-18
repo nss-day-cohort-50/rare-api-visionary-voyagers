@@ -26,7 +26,7 @@ class SubscriptionView(ViewSet):
         user = RareUser.objects.get(user=request.auth.user)
         subscription = Subscription.objects.create(
             follower=user,
-            author=RareUser.objects.get(pk=request.data["followerId"]),
+            author=RareUser.objects.get(pk=request.data["authorId"]),
             created_on=datetime.now().strftime("%Y-%m-%d"),
             ended_on="9999-01-01"
         )

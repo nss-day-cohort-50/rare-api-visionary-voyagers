@@ -15,4 +15,5 @@ SET
     is_active = 1
 WHERE id = 1;
 
-DELETE FROM rareapi_subscription;
+DELETE FROM rareapi_subscription
+where id = 10;

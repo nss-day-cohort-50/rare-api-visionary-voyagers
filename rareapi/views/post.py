@@ -118,7 +118,7 @@ class PostUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RareUser
-        fields = ('user', 'profile_image_url',)
+        fields = ('id', 'user', 'profile_image_url')
 
 
 class PostSerializer(serializers.ModelSerializer):

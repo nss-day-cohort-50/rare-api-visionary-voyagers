@@ -7,3 +7,4 @@ from .reaction import ReactionView
 from .post_tag import PostTagView
 from .subscription import SubscriptionView
 from .admin_profile import admin_profile, AdminView
+from .user_profile import user_profile, users_list
