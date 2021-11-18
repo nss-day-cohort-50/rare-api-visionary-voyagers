@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.viewsets import ViewSet
 from django.contrib.auth.models import User
 from django.db.models import Q
-from rareapi.models import RareUser
+from rareapi.models import RareUser, Subscription
 
 class AdminView(ViewSet):
     def partial_update(self, request, pk=None):

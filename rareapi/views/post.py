@@ -13,6 +13,7 @@ from rareapi.models import Post, Category, PostTag
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from datetime import datetime
+from rareapi.models.subscription import Subscription
 
 
 class PostView(ViewSet):
@@ -25,8 +26,13 @@ class PostView(ViewSet):
             posts = Post.objects.all().filter(approved=True)
 
         user_post = self.request.query_params.get('postsbyuser', None)
+        subscribed_posts = self.request.query_params.get('subscribed', None)
+
         if user_post is not None:
             posts = Post.objects.filter(user=user)
+
+        if subscribed_posts is not None:
+            posts = Post.objects.filter(user__author__follower=user)
 
         for post in posts:
             post.is_author = post.user == user
@@ -46,7 +52,6 @@ class PostView(ViewSet):
             return HttpResponseServerError(ex)
 
     def update(self, request, pk):
-        user = RareUser.objects.get(user=request.auth.user)
 
         try:
             post = Post.objects.get(pk=pk)
@@ -59,7 +64,7 @@ class PostView(ViewSet):
             post.content = request.data['content']
             post.approved = request.data['approved']
             post.tags.set(request.data['tagIds'])
-            post.user = user
+            post.user = post.user
             post.save()
             return Response({"message": "Updated Post"}, status=status.HTTP_204_NO_CONTENT)
         except Exception as ex:
@@ -113,7 +118,7 @@ class PostUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RareUser
-        fields = ('user', 'profile_image_url',)
+        fields = ('id', 'user', 'profile_image_url')
 
 
 class PostSerializer(serializers.ModelSerializer):
